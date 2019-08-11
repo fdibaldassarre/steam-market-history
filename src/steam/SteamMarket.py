@@ -80,9 +80,9 @@ class SteamMarket(SteamCommunity):
         # item['acted_with'] = _get_xpath_value(div, XPATH_ACTED_WITH)
         # Set listed/acted dates
         listed_divs = div.xpath(XPATH_LISTED_ON)
-        item['listed_on'] = listed_divs[0].text_content().strip()
+        item['acted_on'] = listed_divs[0].text_content().strip()
         if len(listed_divs) == 2:
-            item['acted_on'] = listed_divs[1].text_content().strip()
+            item['listed_on'] = listed_divs[1].text_content().strip()
         # Set price
         price_raw = _get_xpath_value(div, XPATH_PRICE)
         item['price'] = _parse_price(price_raw)
@@ -107,6 +107,9 @@ class SteamMarket(SteamCommunity):
             self.logger.error("Cannot download history at page %d" % page)
             return -1, None
         total_count = response["total_count"]
+        if total_count is None:
+            self.logger.error("No history to download")
+            return 0, None
         items = self._load_items_from_response(response)
         # Set ids
         for position_in_page, item in enumerate(items):
