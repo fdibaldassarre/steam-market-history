@@ -181,11 +181,12 @@ class EntityDAO(SessionDAO):
         '''
         return self._getBy(order=func.random(), limit=limit)
 
-    def _getBy(self, filters=None, order=None, offset=None, limit=None):
+    def _getBy(self, filter=None, filters_by=None, order=None, offset=None, limit=None):
         '''
             Get list of entities with the given filters.
 
-            :param dict filters: Filters on the result (e.g. name="Smtg")
+            :param dict filters_by: Filters on the result (e.g. name="Smtg")
+            :param dict filter: Filter on the result (e.g. User.email == "Smtg")
             :param Persistent.Entity.key order: Key used to sort
             :param int offset: Offset
             :param int limit: Limit
@@ -195,8 +196,10 @@ class EntityDAO(SessionDAO):
         query = self._session.query(self._persistent_entity)
         if self._options is not None:
             query = query.options(self._options)
-        if filters is not None:
-            query = query.filter_by(**filters)
+        if filters_by is not None:
+            query = query.filter_by(**filters_by)
+        if filter is not None:
+            query = query.filter(filter)
         if order is not None:
             query = query.order_by(order)
         if offset is not None:

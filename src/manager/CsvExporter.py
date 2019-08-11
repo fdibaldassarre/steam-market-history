@@ -35,10 +35,7 @@ class HistoryExporter:
 
     def _write_file(self, writer, include_all):
         writer.writerow(HEADER)
-        for item in self.history_dao.getAll():
-            if not include_all and \
-            (item.action == ACTION_LISTING_CREATED or item.action == ACTION_LISTING_CANCELED):
-                continue
+        for item in self.history_dao.get_all_buy_or_sell():
             line = []
             if item.acted_on is not None:
                 line.append(item.acted_on)

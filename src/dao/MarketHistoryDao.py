@@ -2,6 +2,8 @@
 
 from ..entities.Domain import IMarketHistoryItem
 from ..entities.Persistent import MarketHistoryItem
+from ..entities.Persistent import ACTION_BUY
+from ..entities.Persistent import ACTION_SELL
 
 from .Common import EntityDAO
 from .Common import withSession
@@ -22,3 +24,9 @@ class MarketHistoryDAO(EntityDAO):
             return None
         else:
             return items[0]
+
+    @withSession
+    @returnNonPersistent
+    def get_all_buy_or_sell(self):
+        return self._getBy(
+        filter=((MarketHistoryItem.action == ACTION_BUY) | (MarketHistoryItem.action == ACTION_SELL)), order=MarketHistoryItem.id.desc())
