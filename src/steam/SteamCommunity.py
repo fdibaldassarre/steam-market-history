@@ -37,6 +37,7 @@ class SteamCommunity():
         if 'sessionid' not in request.cookies:
             self.logger.error("Session ID not set in cookies")
             return False
+        self.logger.info("Login success")
         self.cookies_jar.update(request.cookies)
         self._logged_in = True
         return True

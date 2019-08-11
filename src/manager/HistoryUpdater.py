@@ -57,6 +57,8 @@ class MultiThreadUpdater():
 
     def _initialize(self):
         total_count, items = self.market.get_history(0)
+        if total_count < 1:
+            raise RuntimeError("No history to download")
         total_pages = ceil(total_count / PAGE_SIZE)
         self._pages_queue = Queue(maxsize=total_pages)
         for page in range(1, total_pages):
@@ -104,6 +106,7 @@ class HistoryUpdater():
             self._updateHistory(last_item)
 
     def _updateHistory(self, last_item):
+        self.logger.info("Update history since %d", last_item.id)
         try:
             self.history_dao.openSession()
             page = 0
@@ -121,6 +124,8 @@ class HistoryUpdater():
             self.history_dao.closeSession()
 
     def _downloadAllHistory(self):
+        self.logger.info("Download all the history")
         updater = MultiThreadUpdater(self.market, self.history_dao)
         updater.start()
         updater.join()
+        self.logger.info("Download complete")
